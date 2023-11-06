@@ -1,0 +1,119 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "function-auto-python"
+version = "0.0.0"
+description = 'A composition function'
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+keywords = []
+authors = [{ name = "Nic Cope", email = "nicc@rk0n.org" }]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.11",
+]
+
+# TODO(negz): Pin these? Most of them are deps of the SDK.
+dependencies = [
+  "click==8.1.7",
+  "grpcio==1.59.2",
+  "grpcio-reflection==1.59.2",
+  "structlog==23.2.0",
+]
+
+[project.urls]
+Documentation = "https://github.com/negz/function-auto-python#readme"
+Issues = "https://github.com/negz/function-auto-python/issues"
+Source = "https://github.com/negz/function-auto-python"
+
+[project.scripts]
+function = "function.main:cli"
+
+[tool.hatch.envs.default]
+type = "virtual"
+path = ".venv-default"
+
+[tool.hatch.envs.generate]
+type = "virtual"
+detached = true
+path = ".venv-generate"
+dependencies = ["grpcio-tools==1.59.2"]
+
+[tool.hatch.envs.generate.scripts]
+protoc = "python -m grpc_tools.protoc --proto_path=. --python_out=. --pyi_out=. --grpc_python_out=. function/proto/v1beta1/run_function.proto"
+
+[tool.black]
+target-version = ["py311"]
+line-length = 120
+
+[tool.ruff]
+target-version = "py37"
+line-length = 120
+select = [
+  "A",
+  "ARG",
+  "B",
+  "C",
+  "DTZ",
+  "E",
+  "EM",
+  "F",
+  "FBT",
+  "I",
+  "ICN",
+  "ISC",
+  "N",
+  "PLC",
+  "PLE",
+  "PLR",
+  "PLW",
+  "Q",
+  "RUF",
+  "S",
+  "T",
+  "TID",
+  "UP",
+  "W",
+  "YTT",
+]
+
+[tool.ruff.isort]
+known-first-party = ["function"]
+
+[tool.ruff.flake8-tidy-imports]
+ban-relative-imports = "all"
+
+[tool.ruff.per-file-ignores]
+"function/sdk/proto/**/*" = [
+  "F",
+  "UP",
+  "I",
+  "E",
+  "Q",
+  "A",
+  "PLR",
+  "N",
+  "ARG",
+  "EM",
+  "FBT",
+]
+
+[tool.coverage.run]
+source_pkgs = ["function", "tests"]
+branch = true
+parallel = true
+omit = ["function/__version__.py"]
+
+[tool.coverage.paths]
+function_auto_python = [
+  "function",
+  "*/function-auto-python/src/function_auto_python",
+]
+tests = ["tests", "*/function/tests"]
+
+[tool.coverage.report]
+exclude_lines = ["no cov", "if __name__ == .__main__.:", "if TYPE_CHECKING:"]
