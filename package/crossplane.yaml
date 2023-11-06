@@ -1,0 +1,17 @@
+---
+apiVersion: meta.pkg.crossplane.io/v1beta1
+kind: Function
+metadata:
+  name: function-auto-python
+  annotations:
+    meta.crossplane.io/maintainer: Nic Cope <negz@upbound.io>
+    meta.crossplane.io/source: github.com/negz/function-auto-python
+    meta.crossplane.io/license: Apache-2.0
+    meta.crossplane.io/description: A composition function that automatically detects when resources are ready
+    meta.crossplane.io/readme: |
+      This composition function automatically detects composed resources that
+      are ready. Crossplane considers a composite resource (XR) to be ready when
+      all of its desired composed resources are ready. See the
+      [README](https://github.com/negz/function-auto-python) for examples and
+      documentation.
+spec: {}
