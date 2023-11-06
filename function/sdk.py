@@ -63,7 +63,11 @@ def configure_logging(*, debug: bool) -> None:
 
 
 async def serve(
-    function: grpcv1beta1.FunctionRunnerService, address: str, *, creds: grpc.ServerCredentials, insecure: bool
+    function: grpcv1beta1.FunctionRunnerService,
+    address: str,
+    *,
+    creds: grpc.ServerCredentials,
+    insecure: bool,
 ) -> None:
     server = grpc.aio.server()
 

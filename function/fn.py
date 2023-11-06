@@ -16,5 +16,9 @@ class FunctionRunner(grpcv1beta1.FunctionRunnerService):
 
         return fnv1beta1.RunFunctionResponse(
             desired=req.desired,
-            results=[fnv1beta1.Result(severity=fnv1beta1.SEVERITY_NORMAL, message="Hello world!")],
+            results=[
+                fnv1beta1.Result(
+                    severity=fnv1beta1.SEVERITY_NORMAL, message="Hello world!"
+                )
+            ],
         )

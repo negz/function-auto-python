@@ -48,11 +48,11 @@ protoc = "python -m grpc_tools.protoc --proto_path=. --python_out=. --pyi_out=. 
 
 [tool.black]
 target-version = ["py311"]
-line-length = 120
+line-length = 79
 
 [tool.ruff]
-target-version = "py37"
-line-length = 120
+target-version = "py311"
+line-length = 79
 select = [
   "A",
   "ARG",
