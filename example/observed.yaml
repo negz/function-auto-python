@@ -1,0 +1,16 @@
+---
+apiVersion: s3.aws.upbound.io/v1beta1
+kind: Bucket
+metadata:
+  name: example-xr-rand0m
+  annotations:
+    crossplane.io/composition-resource-name: bucket
+spec:
+  forProvider:
+    region: us-east-2
+status:
+  conditions:
+  - type: Ready
+    status: "True"
+    reason: Available
+    lastTransitionTime: "2023-11-17T00:23:15Z"

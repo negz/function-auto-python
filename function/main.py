@@ -1,4 +1,4 @@
-import asyncio
+"""The composition function's main CLI."""
 
 import click
 
@@ -30,16 +30,17 @@ from function import fn, sdk
     "If you supply this flag --tls-certs-dir will be ignored.",
 )
 def cli(debug: bool, address: str, tls_certs_dir: str, insecure: bool) -> None:  # noqa:FBT001  # We only expect callers via the CLI.
-    """A Crossplane Composition Function."""
-    sdk.configure_logging(debug=debug)
-    asyncio.run(
+    """A Crossplane composition function."""  # noqa:D401  # This appears as the CLI's --help text.
+    try:
+        sdk.configure_logging(debug=debug)
         sdk.serve(
             fn.FunctionRunner(),
             address,
             creds=sdk.load_credentials(tls_certs_dir),
             insecure=insecure,
         )
-    )
+    except Exception as e:
+        click.echo(f"Cannot serve gRPC requests: {e}")
 
 
 if __name__ == "__main__":

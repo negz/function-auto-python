@@ -8,8 +8,6 @@ this out into function-sdk-python and function-template-python.
 
 TODO:
 
-* Implement the function-auto-ready logic. Currently it's "Hello world".
-* Test that it works in a cluster (i.e. loads TLS certs properly).
 * Break the `function.sdk` package out into a PyPI package.
 * Figure out a pattern for testing.
 
