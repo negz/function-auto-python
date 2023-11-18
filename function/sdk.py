@@ -3,6 +3,7 @@
 import asyncio
 import dataclasses
 import datetime
+import enum
 import logging
 import os
 
@@ -52,21 +53,43 @@ def load_credentials(tls_certs_dir: str) -> grpc.ServerCredentials:
     )
 
 
-def configure_logging(*, debug: bool) -> None:
+class LogLevel(enum.Enum):
+    """Supported log levels."""
+
+    DISABLED = 0
+    DEBUG = 1
+    INFO = 2
+
+
+def configure_logging(level: LogLevel = LogLevel.INFO) -> None:
     """Configure logging.
 
     Args:
-        debug: Whether to enable debug logging.
+        level: What log level to enable.
 
     Must be called before calling get_logger. When debug logging is enabled logs
     will be printed in a human readable fashion. When not enabled, logs will be
     printed as JSON lines.
     """
+
+    def dropper(logger, method_name, event_dict):  # noqa: ARG001  # We need this signature.
+        raise structlog.DropEvent
+
+    if level == LogLevel.DISABLED:
+        structlog.configure(processors=[dropper])
+        return
+
     processors = [
         structlog.stdlib.add_log_level,
+        structlog.processors.CallsiteParameterAdder(
+            {
+                structlog.processors.CallsiteParameter.FILENAME,
+                structlog.processors.CallsiteParameter.LINENO,
+            }
+        ),
     ]
 
-    if debug:
+    if level == LogLevel.DEBUG:
         structlog.configure(
             processors=[
                 *processors,
@@ -219,3 +242,10 @@ def response_from(req: fnv1beta1.RunFunctionRequest) -> fnv1beta1.RunFunctionRes
         desired=req.desired,
         context=req.context,
     )
+
+
+def dict_to_struct(d: dict) -> structpb.Struct:
+    """Create a Struct well-known type from the supplied dict."""
+    s = structpb.Struct()
+    s.update(d)
+    return s

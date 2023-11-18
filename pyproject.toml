@@ -47,6 +47,15 @@ dependencies = ["grpcio-tools==1.59.2"]
 [tool.hatch.envs.generate.scripts]
 protoc = "python -m grpc_tools.protoc --proto_path=. --python_out=. --pyi_out=. --grpc_python_out=. function/proto/v1beta1/run_function.proto"
 
+[tool.hatch.envs.test]
+type = "virtual"
+path = ".venv-test"
+
+[tool.hatch.envs.test.scripts]
+unit = "python -m unittest tests/*.py"
+
+# TODO(negz): What is actually installing ruff and black?
+
 [tool.black]
 target-version = ["py311"]
 
@@ -74,7 +83,6 @@ select = [
   "PLE",
   "PLR",
   "PLW",
-  "PT",
   "Q",
   "RUF",
   "S",
@@ -85,27 +93,11 @@ select = [
   "YTT",
 ]
 
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["D"] # Don't require docstrings for tests.
+
 [tool.ruff.isort]
 known-first-party = ["function"]
 
-[tool.ruff.flake8-tidy-imports]
-ban-relative-imports = "all"
-
 [tool.ruff.lint.pydocstyle]
 convention = "google"
-
-[tool.coverage.run]
-source_pkgs = ["function", "tests"]
-branch = true
-parallel = true
-omit = ["function/__version__.py"]
-
-[tool.coverage.paths]
-function_auto_python = [
-  "function",
-  "*/function-auto-python/src/function_auto_python",
-]
-tests = ["tests", "*/function/tests"]
-
-[tool.coverage.report]
-exclude_lines = ["no cov", "if __name__ == .__main__.:", "if TYPE_CHECKING:"]
