@@ -47,6 +47,16 @@ dependencies = ["grpcio-tools==1.59.2"]
 [tool.hatch.envs.generate.scripts]
 protoc = "python -m grpc_tools.protoc --proto_path=. --python_out=. --pyi_out=. --grpc_python_out=. function/proto/v1beta1/run_function.proto"
 
+[tool.hatch.envs.lint]
+type = "virtual"
+detached = true
+path = ".venv-lint"
+dependencies = ["ruff==0.1.6"]
+
+[tool.hatch.envs.lint.scripts]
+check = "ruff check function tests"
+check-format = "ruff format --diff function tests"
+
 [tool.hatch.envs.test]
 type = "virtual"
 path = ".venv-test"
@@ -55,9 +65,6 @@ path = ".venv-test"
 unit = "python -m unittest tests/*.py"
 
 # TODO(negz): What is actually installing ruff and black?
-
-[tool.black]
-target-version = ["py311"]
 
 [tool.ruff]
 target-version = "py311"
@@ -92,6 +99,7 @@ select = [
   "W",
   "YTT",
 ]
+ignore = ["ISC001"] # Ruff warns this is incompatible with ruff format.
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["D"] # Don't require docstrings for tests.
