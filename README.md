@@ -9,7 +9,6 @@ this out into function-sdk-python and function-template-python.
 TODO:
 
 * Break the `function.sdk` package out into a PyPI package.
-* Figure out a pattern for testing.
 
 Development uses [Hatch][hatch]. I chose it from an [overwhelming ecosystem of
 build tools][too-many-tools] because:
