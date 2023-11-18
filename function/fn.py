@@ -19,7 +19,7 @@ class FunctionRunner(grpcv1beta1.FunctionRunnerService):
     ) -> fnv1beta1.RunFunctionResponse:
         """Run the function."""
         log = self.log.bind(tag=req.meta.tag)
-        await log.ainfo("Running function")
+        log.info("Running function")
 
         rsp = sdk.response_from(req)
 
@@ -29,29 +29,27 @@ class FunctionRunner(grpcv1beta1.FunctionRunnerService):
             # If this desired resource doesn't exist in the observed resources,
             # it can't be ready because it doesn't exist yet.
             if name not in req.observed.resources:
-                await log.adebug(
+                log.debug(
                     "Ignoring desired resource that does not appear in "
                     "observed resources"
                 )
                 continue
 
             if dr.ready != fnv1beta1.READY_UNSPECIFIED:
-                await log.adebug(
+                log.debug(
                     "Ignoring desired resource that already has explicit readiness",
                     ready=dr.ready,
                 )
                 continue
 
-            await log.adebug("Found desired resource with unknown readiness")
+            log.debug("Found desired resource with unknown readiness")
 
             condition = sdk.get_condition(
                 req.observed.resources[name].resource, "Ready"
             )
 
             if condition.status == "True":
-                await log.ainfo(
-                    "Automatically determined that composed resource is ready"
-                )
+                log.info("Automatically determined that composed resource is ready")
                 dr.ready = fnv1beta1.READY_TRUE
 
         return rsp
