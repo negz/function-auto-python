@@ -1,10 +1,9 @@
 """A Crossplane composition function."""
 
 import grpc
-
-from function import sdk
-from function.proto.v1beta1 import run_function_pb2 as fnv1beta1
-from function.proto.v1beta1 import run_function_pb2_grpc as grpcv1beta1
+from crossplane.function import logging, resource, response
+from crossplane.function.proto.v1beta1 import run_function_pb2 as fnv1beta1
+from crossplane.function.proto.v1beta1 import run_function_pb2_grpc as grpcv1beta1
 
 
 class FunctionRunner(grpcv1beta1.FunctionRunnerService):
@@ -12,7 +11,7 @@ class FunctionRunner(grpcv1beta1.FunctionRunnerService):
 
     def __init__(self):
         """Create a new FunctionRunner."""
-        self.log = sdk.get_logger()
+        self.log = logging.get_logger()
 
     async def RunFunction(  # noqa:N802 # This is the interface gRPC generates.
         self, req: fnv1beta1.RunFunctionRequest, _: grpc.aio.ServicerContext
@@ -21,7 +20,7 @@ class FunctionRunner(grpcv1beta1.FunctionRunnerService):
         log = self.log.bind(tag=req.meta.tag)
         log.info("Running function")
 
-        rsp = sdk.response_from(req)
+        rsp = response.to(req)
 
         for name, dr in rsp.desired.resources.items():
             log = log.bind(composed_resource_name=name)
@@ -44,7 +43,7 @@ class FunctionRunner(grpcv1beta1.FunctionRunnerService):
 
             log.debug("Found desired resource with unknown readiness")
 
-            condition = sdk.get_condition(
+            condition = resource.get_condition(
                 req.observed.resources[name].resource, "Ready"
             )
 

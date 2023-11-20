@@ -1,16 +1,18 @@
 import dataclasses
 import unittest
 
+from crossplane.function import logging, resource
+from crossplane.function.proto.v1beta1 import run_function_pb2 as fnv1beta1
+from google.protobuf import duration_pb2 as durationpb
 from google.protobuf import json_format
 from google.protobuf import struct_pb2 as structpb
 
-from function import fn, sdk
-from function.proto.v1beta1 import run_function_pb2 as fnv1beta1
+from function import fn
 
 
 class TestFunctionRunner(unittest.IsolatedAsyncioTestCase):
     def setUp(self) -> None:
-        sdk.configure_logging(level=sdk.LogLevel.DISABLED)
+        logging.configure(level=logging.Level.DISABLED)
 
     async def test_run_function(self) -> None:
         @dataclasses.dataclass
@@ -27,7 +29,7 @@ class TestFunctionRunner(unittest.IsolatedAsyncioTestCase):
                     observed=fnv1beta1.State(
                         resources={
                             "ready-composed-resource": fnv1beta1.Resource(
-                                resource=sdk.dict_to_struct(
+                                resource=resource.dict_to_struct(
                                     {
                                         "apiVersion": "test.crossplane.io/v1",
                                         "kind": "Example",
@@ -52,7 +54,7 @@ class TestFunctionRunner(unittest.IsolatedAsyncioTestCase):
                     ),
                 ),
                 want=fnv1beta1.RunFunctionResponse(
-                    meta=fnv1beta1.ResponseMeta(),
+                    meta=fnv1beta1.ResponseMeta(ttl=durationpb.Duration(seconds=60)),
                     desired=fnv1beta1.State(
                         resources={
                             # This function doesn't care about the desired

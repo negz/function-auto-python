@@ -1,8 +1,9 @@
 """The composition function's main CLI."""
 
 import click
+from crossplane.function import logging, runtime
 
-from function import fn, sdk
+from function import fn
 
 
 @click.command()
@@ -32,14 +33,14 @@ from function import fn, sdk
 def cli(debug: bool, address: str, tls_certs_dir: str, insecure: bool) -> None:  # noqa:FBT001  # We only expect callers via the CLI.
     """A Crossplane composition function."""
     try:
-        level = sdk.LogLevel.INFO
+        level = logging.Level.INFO
         if debug:
-            level = sdk.LogLevel.DEBUG
-        sdk.configure_logging(level=level)
-        sdk.serve(
+            level = logging.Level.DEBUG
+        logging.configure(level=level)
+        runtime.serve(
             fn.FunctionRunner(),
             address,
-            creds=sdk.load_credentials(tls_certs_dir),
+            creds=runtime.load_credentials(tls_certs_dir),
             insecure=insecure,
         )
     except Exception as e:

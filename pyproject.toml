@@ -17,12 +17,14 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
 ]
 
-# TODO(negz): Pin these? Most of them are deps of the SDK.
 dependencies = [
+  # TODO(negz): This isn't meant for real-world use. Push to PyPI instead.
+  "function-sdk-python @ git+https://github.com/crossplane/function-sdk-python",
+
+  # Pin at least the things we import directly.
   "click==8.1.7",
   "grpcio==1.59.2",
-  "grpcio-reflection==1.59.2",
-  "structlog==23.2.0",
+  "protobuf==4.25.1",
 ]
 
 [project.urls]
@@ -33,19 +35,13 @@ Source = "https://github.com/negz/function-auto-python"
 [project.scripts]
 function = "function.main:cli"
 
+[tool.hatch.metadata]
+allow-direct-references = true
+
 [tool.hatch.envs.default]
 type = "virtual"
 path = ".venv-default"
 dependencies = ["ipython==8.17.2"]
-
-[tool.hatch.envs.generate]
-type = "virtual"
-detached = true
-path = ".venv-generate"
-dependencies = ["grpcio-tools==1.59.2"]
-
-[tool.hatch.envs.generate.scripts]
-protoc = "python -m grpc_tools.protoc --proto_path=. --python_out=. --pyi_out=. --grpc_python_out=. function/proto/v1beta1/run_function.proto"
 
 [tool.hatch.envs.lint]
 type = "virtual"
@@ -54,8 +50,7 @@ path = ".venv-lint"
 dependencies = ["ruff==0.1.6"]
 
 [tool.hatch.envs.lint.scripts]
-check = "ruff check function tests"
-check-format = "ruff format --diff function tests"
+check = "ruff check function tests && ruff format --diff function tests"
 
 [tool.hatch.envs.test]
 type = "virtual"
@@ -63,8 +58,6 @@ path = ".venv-test"
 
 [tool.hatch.envs.test.scripts]
 unit = "python -m unittest tests/*.py"
-
-# TODO(negz): What is actually installing ruff and black?
 
 [tool.ruff]
 target-version = "py311"

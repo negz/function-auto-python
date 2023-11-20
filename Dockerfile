@@ -7,7 +7,7 @@ RUN --mount=type=cache,target=/var/lib/apt/lists \
     --mount=type=cache,target=/var/cache/apt \
     rm -f /etc/apt/apt.conf.d/docker-clean \
     && apt-get update \
-    && apt-get install --no-install-recommends --yes python3-venv
+    && apt-get install --no-install-recommends --yes python3-venv git
 
 # Don't write .pyc bytecode files. These speed up imports when the program is
 # loaded. There's no point doing that in a container where they'll never be
