@@ -13,7 +13,7 @@ class FunctionRunner(grpcv1beta1.FunctionRunnerService):
         """Create a new FunctionRunner."""
         self.log = logging.get_logger()
 
-    async def RunFunction(  # noqa:N802 # This is the interface gRPC generates.
+    async def RunFunction(
         self, req: fnv1beta1.RunFunctionRequest, _: grpc.aio.ServicerContext
     ) -> fnv1beta1.RunFunctionResponse:
         """Run the function."""
